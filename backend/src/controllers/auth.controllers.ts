@@ -30,8 +30,9 @@ export const signup = async (req: Request, res: Response) => {
             profilePicture: ""
         });
         if (newUser) {
-            generateToken(newUser._id.toString(), res);
-            await newUser.save();
+            const savedUser = await newUser.save();
+            generateToken(savedUser._id.toString(), res);
+            
             res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,
