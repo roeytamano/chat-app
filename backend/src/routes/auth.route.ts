@@ -3,11 +3,10 @@ import express from "express";
 const router = express.Router();
 
 
-router.get("/signup", (req, res) => {
+router.post("/signup", (req, res) => {
   // signup logic here
   res.send("User signed up");
 });
-
 router.post("/login", (req, res) => {
   // login logic here
   res.send("User logged in");

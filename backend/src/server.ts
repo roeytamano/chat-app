@@ -3,8 +3,10 @@ import path from 'path';
 import authRoutes from './routes/auth.route';
 import messageRoutes from './routes/message.route';
 const app = express();
-const port = process.env.PORT || 3000;
-
+const port = parseInt(process.env.PORT || '3000', 10);
+if (isNaN(port) || port < 1 || port > 65535) {
+  throw new Error(`Invalid port: ${process.env.PORT}`);
+}
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
