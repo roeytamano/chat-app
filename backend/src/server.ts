@@ -3,7 +3,7 @@ import path from 'path';
 import authRoutes from './routes/auth.route';
 import messageRoutes from './routes/message.route';
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
