@@ -9,6 +9,7 @@ export const generateToken = (userId: string, res: Response) => {
     }
 
     const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: "7d" });
+
     res.cookie("jwt", token, {
         httpOnly: true, // prevent client-side JS from reading the cookie and helps prevent XSS attacks,
         sameSite: "strict", // CSRF protection
