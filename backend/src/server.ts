@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import authRoutes from './routes/auth.route';
 import messageRoutes from './routes/message.route';
@@ -14,6 +15,7 @@ if (isNaN(port) || port < 1 || port > 65535) {
 
 // middleware
 app.use(express.json()); // request body parser
+app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
