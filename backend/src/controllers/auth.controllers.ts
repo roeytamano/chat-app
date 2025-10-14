@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils";
+import { sendWelcomeEmail } from "../emails/emailHandlers";
+import { ENV } from "../lib/env";
 
 export const signup = async (req: Request, res: Response) => {
     const {fullName, email, password} = req.body;
@@ -41,7 +43,14 @@ export const signup = async (req: Request, res: Response) => {
                 profilePicture: newUser.profilePicture
             });
             console.log("Signup request body:", req.body);
-            // TODO: send welcome email
+            
+            try{
+                await sendWelcomeEmail(savedUser.email, savedUser.fullName, ENV.CLIENT_URL!);
+                console.log("Welcome email sent to:", savedUser.email);
+            } catch (error) {
+                console.error("Error sending welcome email:", error);
+            }
+
         } else {
             return res.status(500).json({ message: "Error creating user." });
         }
