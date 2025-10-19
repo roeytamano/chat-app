@@ -19,7 +19,7 @@ export interface UseAuthStore {
     signup: (data: SignupForm) => Promise<void>;
 }
 
-export const useAuthStore = create<UseAuthStore>((set, get) => ({
+export const useAuthStore = create<UseAuthStore>((set, _get) => ({
     authUser: null,
     isCheckingAuth: true,
     isSigningUp: false,

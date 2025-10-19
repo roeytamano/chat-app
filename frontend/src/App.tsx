@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ChatPage from './pages/ChatPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
