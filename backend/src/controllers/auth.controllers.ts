@@ -21,8 +21,12 @@ export const signup = async (req: Request, res: Response) => {
         }
         
         //check if user already exists
-        const user = await User.findOne({ email });
-        if (user) return res.status(400).json({ message: "Email already in use." });
+        const userEmail = await User.findOne({ email });
+        if (userEmail) return res.status(400).json({ message: "Email already in use." });
+        const userName = await User.findOne({ fullName });
+        if (userName) return res.status(400).json({ message: "Username already in use." });
+
+        //hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         //create new user
@@ -96,12 +100,14 @@ export const logout = (_: Request, res: Response) => {
     res.status(200).json({ message: "User logged out successfully." });
 }
 
-export const updateProfile = async (req: Request, res: Response) => {
+export const updateProfile = async (req: Request & { user?: { _id?: string } }, res: Response) => {
     try {
         const { profilePicture } = req.body;
         if (!profilePicture) return res.status(400).json({ message: "Profile picture is required." });
 
         const userId = req.user?._id;
+        if (!userId) return res.status(401).json({ message: "Unauthorized." });
+
         const uploadResponse = await cloudinary.uploader.upload(profilePicture)
         const updatedUser = await User.findByIdAndUpdate(userId, { profilePicture: uploadResponse.secure_url }, { new: true });
 

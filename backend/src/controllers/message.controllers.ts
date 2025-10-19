@@ -5,7 +5,7 @@ import Message from "../models/message.model.js";
 import User from "../models/user.model";
 
 
-export const getAllContacts = async (req: Request, res: Response) => {
+export const getAllContacts = async (req: Request & { user?: { _id?: string } }, res: Response) => {
   try {
     const loggedInUserId = req.user!._id;
     const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
@@ -17,7 +17,7 @@ export const getAllContacts = async (req: Request, res: Response) => {
   }
 };
 
-export const getMessagesByUserId = async (req: Request, res: Response) => {
+export const getMessagesByUserId = async (req: Request & { user?: { _id?: string } }, res: Response) => {
     try {
         const myId = req.user!._id;
         const {id} = req.params;
@@ -36,7 +36,7 @@ export const getMessagesByUserId = async (req: Request, res: Response) => {
     }
 }
 
-export const sendMessage = async (req: Request, res: Response) => {
+export const sendMessage = async (req: Request & { user?: { _id?: string } }, res: Response) => {
     try {
         const senderId = req.user!._id;
         const {id: receiverId} = req.params;
@@ -64,18 +64,21 @@ export const sendMessage = async (req: Request, res: Response) => {
     }
 };
 
-export const getChatPartners = async (req: Request, res: Response) => {
+export const getChatPartners = async (req: Request & { user?: { _id?: string } }, res: Response) => {
     try {
-        const myId = req.user!._id;
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const myId = req.user._id;
 
         // Find distinct user IDs who have chatted with the logged-in user
-        const messages = await Message.find({$or: [{senderId: myId }, { receiverId: myId }]});
+        const messages = await Message.find({ $or: [{ senderId: myId }, { receiverId: myId }] });
 
         const partnerIdsSet = [
-            ...new Set (messages.map((msg) => 
-            msg.senderId.toString() === myId.toString() ?
-            msg.receiverId.toString() : msg.senderId.toString()
-        ))];
+            ...new Set(messages.map((msg) =>
+                msg.senderId.toString() === myId.toString() ? msg.receiverId.toString() : msg.senderId.toString()
+            ))
+        ];
 
         const chatPartners = await User.find({ _id: { $in: partnerIdsSet } }).select("-password");
         res.status(200).json(chatPartners);
