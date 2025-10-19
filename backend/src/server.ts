@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.route';
 import messageRoutes from './routes/message.route';
 import { connectDB } from './lib/db';
 import { ENV } from './lib/env';
+import cors from 'cors';
 
 // create express app
 const app = express();
@@ -16,6 +17,7 @@ if (isNaN(port) || port < 1 || port > 65535) {
 // middleware
 app.use(express.json()); // request body parser
 app.use(cookieParser());
+app.use(cors({origin: ENV.CLIENT_URL, credentials: true}));
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
